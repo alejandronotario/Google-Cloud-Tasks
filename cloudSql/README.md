@@ -25,7 +25,7 @@ https://cloud.google.com/sdk/gcloud/reference/
 
 - Generating a name and a password to call the cloud sql instance. It is necessary to create new name and password each instance because Google Cloud does not allow to repeat recently used names to call them. First it is generated the current date and then it is added to "instance" and "pass" for example
 
-```console
+```bash
 today="$(date + "%Y%m%d")"
 number=0
 while test -e "$today$suffix.txt"; do
