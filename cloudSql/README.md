@@ -1,4 +1,4 @@
-# Import & Export Manual at Cloud Sql sevice
+# Import & Export at Cloud SQL sevice
 
 This manual describes some procedures to data management at Google Cloud Sql service
 
@@ -11,7 +11,7 @@ There are several data resources in every project and they must be integrated at
 
 __Workflow__
 
-Database dump at some server -> Import dump to Google Cloud Storage -> Import dump to Google Cloud SQL -> Export csv to Google Cloud Storage
+Database dump at some server -> Importing dump to Google Cloud Storage -> Creating a Cloud SQL instance -> Importing dump to Cloud SQL instance -> Exporting .csv tables to Storage -> Deleting the Cloud SQL instance
 
 ## Prerequisites
 
@@ -23,9 +23,18 @@ https://cloud.google.com/sdk/gcloud/reference/
 
 ## Steps
 
-- Generating a name and a password to call the cloud sql instance. It is necessary to create new name and password each instance because Google Cloud does not allow to repeat recently used names to call them. First it is generated the current date and then it is added to "instance" and "pass" for example
+- Uploading dump to Google Storage:
+
+```console
+server@administrator:~$ gsutil cp -r ~/[FOLDER_NAME] gs://[BUCKET_NAME] #if it is to upload a folder
+server@administrator:~$ gsutil cp ~/[DUMP_FILE_NAME] gs://[BUCKET_NAME]/[FOLDER_NAME]
+```
+- Unzip file if needed, it could be either .zip or .sql.
+
+- Generating a name to call the cloud sql instance. It is necessary to create new name and password each instance because Google Cloud does not allow to repeat recently used names to call them. First it is generated the current date and then it is added to "instance" for example:
 
 ```bash
+#!bin/bash
 today="$(date + "%Y%m%d")"
 number=0
 while test -e "$today$suffix.txt"; do
@@ -37,72 +46,55 @@ password="pass$today$suffix"
 
 ```
 
-- Creating instance at SQL Cloud
+- Creating instance at SQL Cloud:
+
 ```console
-user@cloudshell:~ ([PROJECT_ID])$ gcloud sql instances create [INSTANCE_NAME] --tier=[MACHINE_TYPE] --region=[REGION]
-user@cloudshell:~ ([PROJECT_ID])$ gcloud sql instances create [INSTANCE_NAME] --tier=db-n1-standard-1 --region=europe-west1 #standard instance
-```
-- Setting up the password
-
-```
-gcloud sql users set-password root % --instance $instanceName --password=$password
-
+user@cloudshell:~ ([PROJECT_ID])$ gcloud sql instances create $instanceName --tier=[MACHINE_TYPE] --region=[REGION]
+user@cloudshell:~ ([PROJECT_ID])$ gcloud sql instances create $instanceName --tier=db-n1-standard-1 --region=europe-west1 #standard instance
 ```
 
-- Creating a database at SQL Cloud
-```console
-user@cloudshell:~ ([PROJECT_ID])$ gcloud sql databases create [DATABASE_NAME] --instance=[INSTANCE_NAME]
-```
-- Unzip file if needed, it could be either .zip or .sql  
-- Upload dump to Google Storage
-```console
-server@administrator:~$ gsutil cp -r ~/[FOLDER_NAME] gs://[BUCKET_NAME] #if it is to upload a folder
-server@administrator:~$ gsutil cp ~/[DUMP_FILE_NAME] gs://[BUCKET_NAME]/[FOLDER_NAME] 
-```
-- Making a directory at GC console (just the first time)
-```console
-user@cloudshell:~ ([PROJECT_ID])$ mkdir [DIRECTORY_NAME]
-```
-- Copying the dump file in the created directory:
-```console
-user@cloudshell:~ ([PROJECT_ID])$ gsutil cp gs://[BUCKET_NAME]/[FOLDER_NAME]/[DUMP_FILE_NAME] ~/[DIRECTORY_NAME]
-```
-- Uploading the dump file to SQL Cloud:
-```console
-user@cloudshell:~ ([PROJECT_ID])$ gcloud sql connect [INSTANCE_NAME] --user root < [DUMP_FILE_NAME]
-```
+- Creating a database at SQL Cloud:
 
-- Giving credentials. Is is necessary to give credentials to SQL Cloud to allow it to export data. Server account can be found at SQL Cloud overview. For this:
+```console
+user@cloudshell:~ ([PROJECT_ID])$ gcloud sql databases create [DATABASE_NAME] --instance=$instanceName
+```
+- Giving credentials. Is is necessary to give credentials to SQL Cloud to allow it to import and export data. Server account can be found at SQL Cloud overview. For this:
 
 - 1. Create a text file with instance description in which it can be found the service account address:
 
 ```console
-$ gcloud sql instances describe [INSTANCE_NAME] > [FILE_NAME].txt
+user@cloudshell:~ ([PROJECT_ID])$ gcloud sql instances describe [INSTANCE_NAME] > [FILE_NAME].txt
 
 ```
 
 - 2. Extract service account address:
 
 ```console
-$ grep -o ' .*gserviceaccount.com' account.txt > accountAddress.txt
+user@cloudshell:~ ([PROJECT_ID])$ grep -o ' .*gserviceaccount.com' account.txt > accountAddress.txt
 
 ```
 - 3. Remove the first space:
 
 ```console
-$ tr -d ' ' < accountAddress.txt > no-spaces.txt
+user@cloudshell:~ ([PROJECT_ID])$ tr -d ' ' < accountAddress.txt > no-spaces.txt
 
 ```
-
 - 4. Assign the variable:
 
 ```console
-$ value=$(<no-spaces.txt)
-``` 
-- 5. Giving the writer role: 
+user@cloudshell:~ ([PROJECT_ID])$ value=$(<no-spaces.txt)
+```
+- 5. Giving reader and writer roles. If it is a file to import it must be included the complete path to the file and give credentials to READ:
 
 ```console
-$ gsutil acl ch -u $value:W gs://[BUCKET_NAME]
+user@cloudshell:~ ([PROJECT_ID])$ gsutil acl ch -u $value:R gs://[BUCKET_NAME]/[FOLDER_NAME]/[DUMP_FILE_NAME] 
+user@cloudshell:~ ([PROJECT_ID])$ gsutil acl ch -u $value:W gs://[BUCKET_NAME]
+```
+
+- Uploading the dump file to SQL Cloud. Yes pipe is to answer automatically the prompt:
+
+```console
+user@cloudshell:~ ([PROJECT_ID])$ yes | gcloud sql import sql $instanceName gs://[BUCKET_NAME]/[FOLDER_NAME]/[DUMP_FILE_NAME] --database=[DATABASE_NAME]
 ```
 
 
@@ -114,13 +106,13 @@ $ user@cloudshell:~ ([PROJECT_ID])$ gcloud sql export csv [INSTANCE_NAME] gs://[
 - Exporting data tables with header. The example below is to a 3 columns table:
 
 ```console
-$ gcloud sql export csv $instanceName gs://[BUCKET_NAME]/[FILE_NAME].csv --query="SELECT '[column_name1]','[column_name2]','[column_name3]' UNION ALL SELECT column_name1,column_name2,column_name3 FROM [TABLE_NAME]" --database=[DATABASE_NAME]
+user@cloudshell:~ ([PROJECT_ID])$ gcloud sql export csv $instanceName gs://[BUCKET_NAME]/[FILE_NAME].csv --query="SELECT '[column_name1]','[column_name2]','[column_name3]' UNION ALL SELECT column_name1,column_name2,column_name3 FROM [TABLE_NAME]" --database=[DATABASE_NAME]
 ```
 
 
-- Delete the sql instance. First yes is to force at the prompt 
+- Delete the sql instance.  
 
 ```console
-$ yes | gcloud sql instances delete [INSTANCE_NAME]
+user@cloudshell:~ ([PROJECT_ID])$ yes | gcloud sql instances delete [INSTANCE_NAME]
 ```
 	
