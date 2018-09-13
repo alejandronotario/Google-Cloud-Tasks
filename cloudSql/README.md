@@ -25,7 +25,7 @@ https://cloud.google.com/sdk/gcloud/reference/
 
 - Generating a name and a password to call the cloud sql instance. It is necessary to create new name and password each instance because Google Cloud does not allow to repeat recently used names to call them. First it is generated the current date and then it is added to "instance" and "pass" for example
 
-```
+```console
 today="$(date + "%Y%m%d")"
 number=0
 while test -e "$today$suffix.txt"; do
@@ -50,7 +50,7 @@ gcloud sql users set-password root % --instance $instanceName --password=$passwo
 ```
 
 - Creating a database at SQL Cloud
-```
+```console
 user@cloudshell:~ ([PROJECT_ID])$ gcloud sql databases create [DATABASE_NAME] --instance=[INSTANCE_NAME]
 ```
 - Unzip file if needed, it could be either .zip or .sql  
@@ -77,50 +77,50 @@ user@cloudshell:~ ([PROJECT_ID])$ gcloud sql connect [INSTANCE_NAME] --user root
 - 1. Create a text file with instance description in which it can be found the service account address:
 
 ```console
-gcloud sql instances describe [INSTANCE_NAME] > [FILE_NAME].txt
+$ gcloud sql instances describe [INSTANCE_NAME] > [FILE_NAME].txt
 
 ```
 
 - 2. Extract service account address:
 
 ```console
-grep -o ' .*gserviceaccount.com' account.txt > accountAddress.txt
+$ grep -o ' .*gserviceaccount.com' account.txt > accountAddress.txt
 
 ```
 - 3. Remove the first space:
 
 ```console
-tr -d ' ' < accountAddress.txt > no-spaces.txt
+$ tr -d ' ' < accountAddress.txt > no-spaces.txt
 
 ```
 
 - 4. Assign the variable:
 
 ```console
-value=$(<no-spaces.txt)
+$ value=$(<no-spaces.txt)
 ``` 
 - 5. Giving the writer role: 
 
 ```console
-gsutil acl ch -u $value:W gs://[BUCKET_NAME]
+$ gsutil acl ch -u $value:W gs://[BUCKET_NAME]
 ```
 
 
 - Exporting tables in .csv format to Google Storage. This way does not give any header:
 ```console
-user@cloudshell:~ ([PROJECT_ID])$ gcloud sql export csv [INSTANCE_NAME] gs://[BUCKET_NAME]/[FOLDER_NAME]/[CSV_FILE_NAME] --query='SELECT*FROM [TABLE_NAME]' --database=[DATABASE_NAME]
+$ user@cloudshell:~ ([PROJECT_ID])$ gcloud sql export csv [INSTANCE_NAME] gs://[BUCKET_NAME]/[FOLDER_NAME]/[CSV_FILE_NAME] --query='SELECT*FROM [TABLE_NAME]' --database=[DATABASE_NAME]
 ```
 
-- Exporting data tables with header:
+- Exporting data tables with header. The example below is to a 3 columns table:
 
 ```console
-gcloud sql export csv $instanceName gs://[BUCKET_NAME]/[FILE_NAME].csv --query="SELECT '[column_name1]','[column_name2]','[column_name3]' UNION ALL SELECT column_name1,column_name2,column_name3 FROM [TABLE_NAME]" --database=[DATABASE_NAME]
+$ gcloud sql export csv $instanceName gs://[BUCKET_NAME]/[FILE_NAME].csv --query="SELECT '[column_name1]','[column_name2]','[column_name3]' UNION ALL SELECT column_name1,column_name2,column_name3 FROM [TABLE_NAME]" --database=[DATABASE_NAME]
 ```
 
 
 - Delete the sql instance. First yes is to force at the prompt 
 
 ```console
-yes | gcloud sql instances delete [INSTANCE_NAME]
+$ yes | gcloud sql instances delete [INSTANCE_NAME]
 ```
 	
