@@ -1,13 +1,13 @@
 # Import & Export at Cloud SQL sevice
 
-This manual describes some procedures to data management at Google Cloud Sql service
+
 
 <br>
 <hr>
 
 
 ## Overview
-There are several data resources in every project and they must be integrated at Google Cloud in an automatically way. For this target it is needed to use cron tabs. Here it is described some code to include.
+This manual describes some procedures to data management at Google Cloud Sql service. There are several data resources in every project and they must be integrated at Google Cloud in an automatically way. For this target it is needed to use cron tabs. Here it is described some code to include.
 
 __Workflow__
 
@@ -60,26 +60,26 @@ user@cloudshell:~ ([PROJECT_ID])$ gcloud sql databases create [DATABASE_NAME] --
 ```
 - Giving credentials. Is is necessary to give credentials to SQL Cloud to allow it to import and export data. Server account can be found at SQL Cloud overview. For this:
 
-- 1. Create a text file with instance description in which it can be found the service account address:
+- 1. Creating a text file with instance description in which it can be found the service account address:
 
 ```console
 user@cloudshell:~ ([PROJECT_ID])$ gcloud sql instances describe [INSTANCE_NAME] > [FILE_NAME].txt
 
 ```
 
-- 2. Extract service account address:
+- 2. Extracting service account address:
 
 ```console
 user@cloudshell:~ ([PROJECT_ID])$ grep -o ' .*gserviceaccount.com' account.txt > accountAddress.txt
 
 ```
-- 3. Remove the first space:
+- 3. Removing the first space:
 
 ```console
 user@cloudshell:~ ([PROJECT_ID])$ tr -d ' ' < accountAddress.txt > no-spaces.txt
 
 ```
-- 4. Assign the variable:
+- 4. Assigning the variable:
 
 ```console
 user@cloudshell:~ ([PROJECT_ID])$ value=$(<no-spaces.txt)
@@ -110,7 +110,7 @@ user@cloudshell:~ ([PROJECT_ID])$ gcloud sql export csv $instanceName gs://[BUCK
 ```
 
 
-- Delete the sql instance.  
+- Deleting the sql instance.  
 
 ```console
 user@cloudshell:~ ([PROJECT_ID])$ yes | gcloud sql instances delete [INSTANCE_NAME]
