@@ -63,8 +63,7 @@ gsutil acl ch -u $value:W gs://[BUCKET_NAME]
 
 # 10. Export tables in .csv format to Google Storage. The idea is to code all the required queries in one shell script to run every period
 
-gcloud sql export csv ei4 gs://ei-db/apply_suscription_user.csv --query="select 'id_apply_suscription_user','id_apply_suscription','id_user
-','token','activation_date','insertion_date','update_date'union all select id_apply_suscription_user,id_apply_suscription,id_user,token,activation_date,insertion_date,update_date from apply_suscription_user" --database=db_ei
+gs://[BUCKET_NAME]/[FILE_NAME].csv --query="SELECT '[column_name1]','[column_name2]','[column_name3]' UNION ALL SELECT column_name1,column_name2,column_name3 FROM [TABLE_NAME]" --database=[DATABASE_NAME]
 
 
 # 11. Deleting the instance
