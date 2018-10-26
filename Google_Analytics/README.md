@@ -118,7 +118,7 @@ def get_report(analytics):
 
 __Parsing data__
 
-- First calling samplesReadCounts and samplingSpaceSizes, they give us if the data is sampled or not getting an output
+- First calling 'samplesReadCounts' and 'samplingSpaceSizes', they give us if the data is sampled or not, getting an output
 
 - Then it is defined the file in .csv format with columns names and saving it in the same path it is running the script
 
@@ -171,9 +171,9 @@ if __name__ == '__main__':
 
 ```
 
-__Sequnce of next chunks up to the end__
+__Sequence of next chunks up to the end__
 
-Here pageToken and pageSize are defined on file shape, using it to get the last shape to define them
+Here 'pageToken' and 'pageSize' are defined on file shape, using it to get the last shape to define them
 
 ```python
 
