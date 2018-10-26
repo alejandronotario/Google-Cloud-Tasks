@@ -17,14 +17,17 @@ To get reports from Google Analytics it is necessary to call its API. This is th
 
 ## Libraries
 
-- from apiclient.discovery import build
-- from oauth2client.service_account import ServiceAccountCredentials
-- from datetime import datetime, timedelta
-- import pandas as pd
-- import numpy
-- import json
-- from pandas.io.json import json_normalize
+```python
 
+from apiclient.discovery import build
+from oauth2client.service_account import ServiceAccountCredentials
+from datetime import datetime, timedelta
+import pandas as pd
+import numpy
+import json
+from pandas.io.json import json_normalize
+
+```
 ## Links and sources
 
 - https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#ReportData.FIELDS.sampling_space_sizes
