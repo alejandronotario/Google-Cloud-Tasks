@@ -1,6 +1,6 @@
 # Google Analytics API v4 Python. Getting a report. 
 
-This contains how to obtaing a report callin v4 Google Anañytics API using Python
+This code contains how to obtaing a report callin v4 Google Anañytics API using Python
 
 <br>
 <hr>
@@ -234,7 +234,7 @@ def parse_data(response):
 
 __Calling functions__
 
-- Running the functions x times. This x depends on the typical size of the reports, could be 2, 3, 4... There is no problem if the iteration is longer than you need. Is it easy to check if it has stopped before ending calling the file shape, if it is as X00000 there are pending rows
+Running the functions x times. This x depends on the typical size of the reports, could be 2, 3, 4... There is no problem if the iteration is longer than you need. Is it easy to check if it has stopped before ending calling the file shape, if it is as X00000 there are pending rows
 
 ```python
 
