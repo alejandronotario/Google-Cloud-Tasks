@@ -1,43 +1,38 @@
-<<<<<<< HEAD
+
 # Import & Export Manual
 
 This manual belongs to Ei Analytics project. It describes some procedrues to data management at Google Cloud
-=======
+
 # Import & Export at Cloud SQL service
 
-
->>>>>>> 882f804f11bfcc86390e5fc54f8690e1af3883a0
 
 <br>
 <hr>
 
 
 ## Overview
-<<<<<<< HEAD
-There are several data resources in this project and they must be integrated at Google Cloud in an automatically way. For thos target it is needed to use cron tabs. In this notebooks is is described the code to include.
 
-## Prerequisites
 
-## Links and sources
-=======
-This manual describes some procedures to data management at Google Cloud Sql service. There are several data resources in every project and they must be integrated at Google Cloud in an automatically way. For this target it is needed to use cron tabs. Here it is described some code to include.
-
-__Workflow__
-
-Database dump at some server -> Importing dump to Google Cloud Storage -> Creating a Cloud SQL instance -> Importing dump to Cloud SQL instance -> Exporting .csv tables to Storage -> Deleting the Cloud SQL instance
+This manual describes some procedures to data management at Google Cloud Sql service. There are several data resources in every project and they must be integrated at Google Cloud in an automatically way.For this target it is needed to use cron tabs. Here it is described some code to include.
 
 ## Prerequisites
 
 - A Google Cloud Account
 
+__Workflow__
+
+Database dump at some server -> Importing dump to Google Cloud Storage -> Creating a Cloud SQL instance -> Importing dump to Cloud SQL instance -> Exporting .csv tables to Storage -> Deleting the Cloud SQL instance
+
+
 ## Links and sources
 
->>>>>>> 882f804f11bfcc86390e5fc54f8690e1af3883a0
+
 https://cloud.google.com/sdk/gcloud/reference/
+
 
 ## Steps
 
-<<<<<<< HEAD
+
 __Data from EI Database__
 
 __Steps__
@@ -70,11 +65,11 @@ password="pass$today$suffix"
 
 ```
 
-<<<<<<< HEAD
+
 - Creating instance at SQL Cloud
 ```console
-anotarioei@cloudshell:~ (ei-ga-datastreaming)$ gcloud sql instances create [INSTANCE_NAME] --tier=[MACHINE_TYPE] --region=[REGION]
-anotarioei@cloudshell:~ (ei-ga-datastreaming)$ gcloud sql instances create [INSTANCE_NAME] --tier=db-n1-standard-1 --region=europe-west1 #standard instance
+user@cloudshell:~ (ei-ga-datastreaming)$ gcloud sql instances create [INSTANCE_NAME] --tier=[MACHINE_TYPE] --region=[REGION]
+user@cloudshell:~ (ei-ga-datastreaming)$ gcloud sql instances create [INSTANCE_NAME] --tier=db-n1-standard-1 --region=europe-west1 #standard instance
 ```
 - Setting up the password
 
@@ -84,8 +79,8 @@ gcloud sql users set-password root % --instance $instanceName --password=$passwo
 ```
 
 - Create a database at SQL Cloud
-```
-anotarioei@cloudshell:~ (ei-ga-datastreaming)$ gcloud sql databases create [DATABASE_NAME] --instance=[INSTANCE_NAME]
+```console
+user@cloudshell:~ (ei-ga-datastreaming)$ gcloud sql databases create [DATABASE_NAME] --instance=[INSTANCE_NAME]
 ```
 - Unzip file if needed, it cold be either .zip or .sql  
 - Upload dump to Google Storage
@@ -96,63 +91,64 @@ server@administrator:~$ gsutil cp ~/[DUMP_FILE_NAME] gs://[BUCKET_NAME]/[FOLDER_
 - Make a directory at GC console
 - Copy the dump file in the created directory
 ```console
-anotarioei@cloudshell:~ (ei-ga-datastreaming)$ gsutil cp gs://[BUCKET_NAME]/[FOLDER_NAME]/[DUMP_FILE_NAME] ~/[DIRECTORY_NAME]
+user@cloudshell:~ (ei-ga-datastreaming)$ gsutil cp gs://[BUCKET_NAME]/[FOLDER_NAME]/[DUMP_FILE_NAME] ~/[DIRECTORY_NAME]
 ```
 - Upload the dump file to SQL Cloud
 ```console
-anotarioei@cloudshell:~ (ei-ga-datastreaming)$ gcloud sql connect [INSTANCE_NAME] --user root < [DUMP_FILE_NAME]
+user@cloudshell:~ (ei-ga-datastreaming)$ gcloud sql connect [INSTANCE_NAME] --user root < [DUMP_FILE_NAME]
 ```
 - Export tables in .csv format to Google Storage. The idea is to code all the required queries in one shell script to run every period
-```
-anotarioei@cloudshell:~ (ei-ga-datastreaming)$ gcloud sql export csv [INSTANCE_NAME] gs://[BUCKET_NAME]/[FOLDER_NAME]/[CSV_FILE_NAME] --query='select*from [TABLE_NAME]' --database=[DATABASE_NAME] 
+```console
+user@cloudshell:~ (ei-ga-datastreaming)$ gcloud sql export csv [INSTANCE_NAME] gs://[BUCKET_NAME]/[FOLDER_NAME]/[CSV_FILE_NAME] --query='select*from [TABLE_NAME]' --database=[DATABASE_NAME] 
 ```
 
 
 - Export data tables with header. This is an example and it works
 
-```
+```bash
 gcloud sql export csv ei4 gs://ei-db/apply_suscription_user.csv --query="select 'id_apply_suscription_user','id_apply_suscription','id_user
 ','token','activation_date','insertion_date','update_date'union all select id_apply_suscription_user,id_apply_suscription,id_user,token,activation_date,insertion_date,update_date from ap
 ply_suscription_user" --database=db_ei
 ```
 - Giving credentials. Is is necessary to give credentials to SQL Cloud. Server account can be found at SQL Cloud overview
 
-```
+```bash
 gsutil acl ch -u "[SERVER_ACCOUNT]":W gs://[BUCKET_NAME]
 ```
 
 # Create a text file with instance description in which it can be found the service account address
 
-```
+```bash
 gcloud sql instances describe [INSTANCE_NAME] > [FILE_NAME].txt
 
 ```
 
 # Extract service account address
 
-```
+```bash
 grep -o ' .*gserviceaccount.com' account.txt > accountAddress.txt
 
 ```
 
 # Remove the first space
 
-```
+```bash
 tr -d ' ' < accountAddress.txt > no-spaces.txt
 
 ```
 
 # Assign the variable
 
-```
+```bash
 value=$(<no-spaces.txt)
 ``` 
 
 # Delete the sql instance. First yes is to force at the prompt 
 
-```
+```bash
 yes | gcloud sql instances delete [INSTANCE_NAME]
-=======
+```
+
 - Creating instance at SQL Cloud:
 
 ```console
@@ -207,7 +203,7 @@ user@cloudshell:~ ([PROJECT_ID])$ yes | gcloud sql import sql $instanceName gs:/
 
 - Exporting tables in .csv format to Google Storage. This way does not give any header:
 ```console
-$ user@cloudshell:~ ([PROJECT_ID])$ gcloud sql export csv [INSTANCE_NAME] gs://[BUCKET_NAME]/[FOLDER_NAME]/[CSV_FILE_NAME] --query='SELECT*FROM [TABLE_NAME]' --database=[DATABASE_NAME]
+user@cloudshell:~ ([PROJECT_ID])$ gcloud sql export csv [INSTANCE_NAME] gs://[BUCKET_NAME]/[FOLDER_NAME]/[CSV_FILE_NAME] --query='SELECT*FROM [TABLE_NAME]' --database=[DATABASE_NAME]
 ```
 
 - Exporting data tables with header. The example below is to a 3 columns table:
