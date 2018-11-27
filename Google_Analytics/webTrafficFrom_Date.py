@@ -34,7 +34,7 @@ import sys
 
 SCOPES = ['https://www.googleapis.com/auth/analytics.readonly']
 KEY_FILE_LOCATION = 'client_secrets.json'	
-VIEW_ID = '88406164'
+VIEW_ID = ['yor_VIEW_ID']
 
 """Google Analytics Reporting API V4."""
 
