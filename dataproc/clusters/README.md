@@ -22,7 +22,7 @@ This task takes 4 steps:
 
 - https://cloud.google.com/sdk/gcloud/reference/dataproc/clusters
 
-## Creating cluster with scopes to use datalab with Spark
+__Creating cluster with scopes to use datalab with Spark__
 
 ```bash
 
@@ -40,7 +40,7 @@ gcloud dataproc clusters create $CLUSTER_NAME --num-workers=2 --worker-machine-t
 
 ```
 
-## SSH. Connecting to the remote server to run Datalab and work with Spark
+__SSH. Connecting to the remote server to run Datalab and work with Spark__
 
 ```bash
 
@@ -66,7 +66,7 @@ gcloud compute ssh $HOSTNAME --project=$PROJECT --zone=$ZONE --\
         -D $PORT -N
 ```
 
-## Proxy. Browser configuration with proxy server parameters
+__Proxy. Browser configuration with proxy server parameters__
 
 ```bash
 PORT=1080
@@ -80,7 +80,9 @@ export HOSTNAME=$HOSTNAME
 
 ```
 
-## Local Port. Accessing Web application UIs running on your master instance with SSH local port forwarding, which forwards the master's port to a local port. For example, the following command lets you access localhost:8123 to reach cluster-name-m:8088
+__Local Port__
+
+Accessing Web application UIs running on your master instance with SSH local port forwarding, which forwards the master's port to a local port. For example, the following command lets you access localhost:8123 to reach cluster-name-m:8088
 
 ```bash
 PORT=8123

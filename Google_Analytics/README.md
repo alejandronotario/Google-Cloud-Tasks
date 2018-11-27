@@ -247,8 +247,16 @@ def main():
     response = get_report(analytics)
     parse_data(response)
 if __name__ == '__main__':
-  main()
+  try:
+    main()
+  except KeyError:
+    pass
 
 ```
+
+__Whole year variation__
+
+The script called webTrafficFromDate.py has new code to call with dates and timedelta inputs different reports with the normal limitations to get a "year report". It gives one file each query and adds the new records to a general file gatherin all the data throughout a year.
+
 
 
